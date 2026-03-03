@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dress Affiliate Showcase</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-pink-50">
+   <nav class="bg-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+            <div class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                <i class="fas fa-tshirt mr-2"></i>Dress Affiliate
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-gray-700 hover:text-purple-600">Home</a>
+                <% if (session && session.adminId) { %>
+                    <a href="/admin/dashboard" class="text-gray-700 hover:text-purple-600">Dashboard</a>
+                    <a href="/admin/profile" class="text-gray-700 hover:text-purple-600">Profile</a>
+                    <a href="/admin/logout" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</a>
+                <% } else { %>
+                    <a href="/admin/login" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">Admin Login</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</nav>
+    <main class="max-w-7xl mx-auto px-4 py-8">

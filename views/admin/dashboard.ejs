@@ -1,0 +1,93 @@
+<%- include('../partials/header') %>
+
+<div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold" data-aos="fade-right">
+        Welcome, <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600"><%= session.adminUsername %></span>
+    </h1>
+    <a href="/admin/logout" class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600">Logout</a>
+</div>
+
+<!-- Upload Form with multiple images and online/offline toggle -->
+<div class="bg-white rounded-xl shadow-lg p-8 mb-12" data-aos="fade-up">
+    <h2 class="text-2xl font-semibold mb-6 flex items-center">
+        <i class="fas fa-cloud-upload-alt text-purple-600 mr-3"></i>Upload New Dress
+    </h2>
+    <form action="/admin/upload" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <div>
+            <label class="block text-gray-700 font-medium mb-2">Dress Photos (max 5)</label>
+            <input type="file" name="dressImages" accept="image/*" multiple required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+            <label class="block text-gray-700 font-medium mb-2">Affiliate Link</label>
+            <input type="url" name="affiliateLink" placeholder="https://..." required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+        </div>
+        <div class="flex items-center mb-4">
+            <input type="checkbox" name="boughtOnline" id="boughtOnline" class="w-4 h-4 text-purple-600">
+            <label for="boughtOnline" class="ml-2 text-gray-700">Bought Online (location optional)</label>
+        </div>
+        <div id="locationField">
+            <label class="block text-gray-700 font-medium mb-2">Bought Location</label>
+            <input type="text" name="location" placeholder="e.g., Paris Boutique" 
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+        </div>
+        <div>
+            <label class="block text-gray-700 font-medium mb-2">Date Bought</label>
+            <input type="date" name="boughtDate" required
+                   class="w-full px-4 py-3 border border-gray-300 rounded-lg">
+        </div>
+        <button type="submit" 
+                class="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+            <i class="fas fa-upload mr-2"></i>Upload
+        </button>
+    </form>
+</div>
+
+<!-- Existing Dresses -->
+<h2 class="text-2xl font-semibold mb-6" data-aos="fade-right">
+    <i class="fas fa-list text-pink-600 mr-3"></i>Uploaded Dresses
+</h2>
+
+<% if (dresses.length === 0) { %>
+    <div class="text-center py-12 bg-white rounded-xl shadow">No dresses yet.</div>
+<% } else { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <% dresses.forEach((dress, index) => { %>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                <div class="relative h-48 flex overflow-x-auto snap-x snap-mandatory">
+                    <% dress.images.forEach(img => { %>
+                        <img src="<%= img %>" alt="Dress" class="snap-start w-full h-full object-contain flex-shrink-0">
+                    <% }) %>
+                </div>
+                <div class="p-4">
+                    <p class="text-gray-600 mb-2 truncate"><i class="fas fa-link text-purple-500 mr-2"></i><a href="<%= dress.affiliate_link %>" target="_blank" class="text-blue-600 hover:underline"><%= dress.affiliate_link %></a></p>
+                    <p class="text-gray-600 mb-2"><i class="fas fa-map-marker-alt text-pink-500 mr-2"></i><%= dress.location || 'Online' %></p>
+                    <p class="text-gray-600 mb-4"><i class="fas fa-calendar-alt text-purple-500 mr-2"></i><%= new Date(dress.bought_date).toLocaleDateString() %></p>
+                    <form action="/admin/delete/<%= dress.id %>" method="POST" onsubmit="return confirm('Delete this dress?');">
+                        <button type="submit" class="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+<% } %>
+
+<script>
+    // Toggle location field required based on checkbox
+    const onlineCheckbox = document.getElementById('boughtOnline');
+    const locationInput = document.querySelector('input[name="location"]');
+    onlineCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            locationInput.required = false;
+            locationInput.disabled = true;
+        } else {
+            locationInput.required = true;
+            locationInput.disabled = false;
+        }
+    });
+</script>
+
+<%- include('../partials/footer') %>

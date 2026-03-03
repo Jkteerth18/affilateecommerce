@@ -1,0 +1,134 @@
+<%- include('partials/header') %>
+
+<h1 class="text-4xl font-bold text-center mb-12" data-aos="fade-down">
+    <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">Elegant Dresses Collection</span>
+</h1>
+
+<% if (dresses.length === 0) { %>
+    <div class="text-center py-20" data-aos="zoom-in">
+        <i class="fas fa-tshirt text-6xl text-gray-300 mb-4"></i>
+        <p class="text-xl text-gray-500">No dresses yet. Check back soon!</p>
+    </div>
+<% } else { %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <% dresses.forEach((dress, index) => { %>
+            <div class="dress-card bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
+                 data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                
+                <!-- Carousel -->
+                <div class="relative group">
+                    <div class="carousel-container relative overflow-hidden h-64">
+                        <div class="carousel-track flex transition-transform duration-300 ease-out h-full" 
+                             data-current="0">
+                            <% dress.images.forEach((img, idx) => { %>
+                                <div class="carousel-slide flex-shrink-0 w-full h-full flex items-center justify-center bg-gray-100">
+                                    <img src="<%= img %>" alt="Dress" 
+                                         class="max-w-full max-h-full object-contain">
+                                </div>
+                            <% }) %>
+                        </div>
+                        
+                        <!-- Navigation buttons (show on hover) -->
+                        <% if (dress.images.length > 1) { %>
+                            <button class="carousel-prev absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-chevron-left text-gray-800"></i>
+                            </button>
+                            <button class="carousel-next absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-chevron-right text-gray-800"></i>
+                            </button>
+                        <% } %>
+                    </div>
+                    
+                    <!-- Dots indicator -->
+                    <% if (dress.images.length > 1) { %>
+                        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+                            <% dress.images.forEach((_, idx) => { %>
+                                <button class="carousel-dot w-2 h-2 rounded-full bg-gray-400 hover:bg-gray-600 transition-colors <%= idx === 0 ? 'bg-purple-600' : '' %>" data-index="<%= idx %>"></button>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </div>
+                
+                <div class="p-6">
+                    <div class="flex items-center text-gray-600 mb-3">
+                        <i class="fas fa-map-marker-alt text-pink-500 mr-2"></i>
+                        <span><%= dress.location || 'Online Purchase' %></span>
+                    </div>
+                    <div class="flex items-center text-gray-600 mb-4">
+                        <i class="fas fa-calendar-alt text-purple-500 mr-2"></i>
+                        <span><%= new Date(dress.bought_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                    </div>
+                    <a href="<%= dress.affiliate_link %>" target="_blank" 
+                       class="block w-full text-center bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+                        <i class="fas fa-shopping-cart mr-2"></i>Buy via Affiliate
+                    </a>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+<% } %>
+
+<script>
+    // Simple carousel functionality for each dress
+    document.querySelectorAll('.dress-card').forEach(card => {
+        const track = card.querySelector('.carousel-track');
+        if (!track) return;
+        const slides = track.children;
+        const totalSlides = slides.length;
+        if (totalSlides <= 1) return;
+        
+        let currentIndex = 0;
+        const prevBtn = card.querySelector('.carousel-prev');
+        const nextBtn = card.querySelector('.carousel-next');
+        const dots = card.querySelectorAll('.carousel-dot');
+        
+        const updateCarousel = (index) => {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+            // Update dots
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('bg-purple-600', i === currentIndex);
+                dot.classList.toggle('bg-gray-400', i !== currentIndex);
+            });
+        };
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                updateCarousel(currentIndex - 1);
+            });
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                updateCarousel(currentIndex + 1);
+            });
+        }
+        dots.forEach(dot => {
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const idx = parseInt(dot.dataset.index);
+                updateCarousel(idx);
+            });
+        });
+    });
+</script>
+
+<style>
+    /* Ensure images are contained */
+    .carousel-slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #f9f9f9;
+    }
+    .carousel-slide img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+</style>
+
+<%- include('partials/footer') %>
