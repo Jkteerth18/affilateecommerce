@@ -7,7 +7,7 @@ const adminRoutes = require('./routes/admin');
 const viewerRoutes = require('./routes/viewer');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Set up EJS
 app.set('view engine', 'ejs');
@@ -45,5 +45,5 @@ if (!fs.existsSync(uploadDir)) {
 db.initialize();
 
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
